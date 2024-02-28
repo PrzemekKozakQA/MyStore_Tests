@@ -1,15 +1,16 @@
 package steps_definitions;
 
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +24,9 @@ public class MyStoreAddressSteps {
 
     @Given("User is logged into MyStore account")
     public void userIsLoggedIntoMyStoreAccount() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/driver/chromedriver");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
         driver.get("https://prod-kurs.coderslab.pl/index.php?controller=authentication&back=my-account");
         driver.findElement(By.name("email")).sendKeys(EMAIL);
@@ -44,8 +45,8 @@ public class MyStoreAddressSteps {
         driver.findElement(By.xpath("//span[text()='Create new address']")).click();
     }
 
-    @When("User fills form fields: (.*), (.*), (.*), (.*), (.*) and (.*)")
-    public void userFillsFormFieldsAliasAddressCityZipPostalCodeCountryAndPhone(String alias, String address, String city, String postcode, String country, String phone) {
+    @When("User fills form fields: {string}, {string}, {string}, {string}, {string}, and {string}")
+    public void userFillsFormFieldsAliasAddressCityZipPostalCodeCountryAndPhone(String alias, String address, String city, String zipCode, String country, String phone) {
         // after every sendKeys, part of address that was given is added to list "expectedAddress"
 
         driver.findElement(By.name("alias")).sendKeys(alias);
@@ -57,8 +58,8 @@ public class MyStoreAddressSteps {
         driver.findElement(By.name("city")).sendKeys(city);
         expectedAddress.add(city);
 
-        driver.findElement(By.name("postcode")).sendKeys(postcode);
-        expectedAddress.add(postcode);
+        driver.findElement(By.name("postcode")).sendKeys(zipCode);
+        expectedAddress.add(zipCode);
 
         // select country from drop down
         Select selectCountry = new Select(driver.findElement(By.name("id_country")));
@@ -131,4 +132,5 @@ public class MyStoreAddressSteps {
     public void userCloseBrowser() {
         driver.quit();
     }
+
 }

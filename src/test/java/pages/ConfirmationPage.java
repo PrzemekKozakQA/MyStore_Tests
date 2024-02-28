@@ -17,7 +17,7 @@ public class ConfirmationPage {
     @FindBy(css = ".account")
     private WebElement accountButton;
 
-    @FindBy(xpath = "//tr[td[span[text()='Total']]]")
+    @FindBy(xpath = "//tr[td[span[text()='Total (tax incl.)']]]")
     private WebElement totalPrice;
 
     @FindBy(id = "order-details")

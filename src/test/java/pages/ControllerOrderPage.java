@@ -14,7 +14,7 @@ public class ControllerOrderPage {
     @FindBy(name = "confirm-addresses")
     private WebElement confirmAddressButton;
 
-    @FindBy(xpath = "//span[input[@id='delivery_option_1']]/span")
+    @FindBy(css = ".col-sm-1")
     private WebElement pickupInStoreInput;
 
     @FindBy(name = "confirmDeliveryOption")
@@ -39,9 +39,7 @@ public class ControllerOrderPage {
     }
 
     public void clickConfirmDeliveryButton() {
-        if (!confirmDeliveryButton.isSelected()) {
-            confirmDeliveryButton.click();
-        }
+        confirmDeliveryButton.click();
     }
 
     public void clickPayByCheckInput() {

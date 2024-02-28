@@ -17,7 +17,7 @@ public class OrderHistoryPage {
     @FindBy(css = ".text-xs-right")
     private WebElement orderPrice;
 
-    @FindBy (xpath = "//tr//th[@scope='row']")
+    @FindBy(xpath = "//tr//th[@scope='row']")
     private WebElement orderReference;
 
     public String getStatusText() {
@@ -28,7 +28,7 @@ public class OrderHistoryPage {
         return orderPrice.getText();
     }
 
-    public String getOrderReferences(){
+    public String getOrderReferences() {
         return orderReference.getText();
     }
 

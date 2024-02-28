@@ -1,43 +1,39 @@
 package steps_definitions;
 
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.*;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
-import ru.yandex.qatools.ashot.AShot;
-import ru.yandex.qatools.ashot.Screenshot;
-import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
-import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import javax.imageio.ImageIO;
+import java.time.Duration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MyStoreBuySteps {
     private WebDriver driver;
     private static final String EMAIL = "johnDoe@unknow.com";
     private static final String PASSWORD = "admin";
     private String totalPrice;
-    private String orderDetails;
+    String orderDetails;
 
     private YourAccountPage yourAccountPage;
     private BirdSweaterPage birdSweaterPage;
     private ControllerOrderPage controllerOrderPage;
     private ConfirmationPage confirmationPage;
+    private WebDriverWait wait;
 
     @Given("User is logged into MyStore")
     public void userIsLoggedIntoMyStore() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/driver/chromedriver");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
         //login to MyStore account
         driver.get("https://prod-kurs.coderslab.pl/index.php?controller=authentication");
@@ -55,9 +51,9 @@ public class MyStoreBuySteps {
         MainPageMyStore mainPageMyStore = new MainPageMyStore(driver);
         mainPageMyStore.searchProduct(productName);
 
-        //if first searched product contains searched text, then click it
+        //if first searched product contains searched  text, then click it
         SearchPageMyStore searchPageMyStore = new SearchPageMyStore(driver);
-        if (searchPageMyStore.getFullProductName().contains(productName.toLowerCase()))
+        if (searchPageMyStore.getFullProductName().toLowerCase().contains(productName.toLowerCase()))
             searchPageMyStore.chooseProduct();
     }
 
@@ -66,24 +62,22 @@ public class MyStoreBuySteps {
         birdSweaterPage = new BirdSweaterPage(driver);
 
         //print in terminal regular price of product
-        System.out.println("Regular price is: " + birdSweaterPage.getRegularPrice());
+        System.out.println("Regular price is:" + birdSweaterPage.getRegularPrice());
 
         //count expected new price by percent of discount and print it in terminal
-        BigDecimal expectedNewPrice = birdSweaterPage.getRegularPrice().multiply(BigDecimal.ONE.subtract(new BigDecimal(discount).movePointLeft(2)));
-        System.out.println("Expected price is: " + expectedNewPrice);
+        double expectedNewPrice = birdSweaterPage.getRegularPrice() * (1 - discount * 0.01);
+        System.out.println("Expected price is:" + expectedNewPrice);
 
         //print actual price from page and compare it to expected price
-        System.out.println("Actual price is: " + birdSweaterPage.getNewPrice());
-        assertTrue(expectedNewPrice.compareTo(birdSweaterPage.getNewPrice()) == 0);
-
+        System.out.println("Actual price is:" + birdSweaterPage.getNewPrice());
+        assertEquals(expectedNewPrice, birdSweaterPage.getNewPrice(), 0.01);
     }
 
     @When("User chooses size {string} and quantity {string}")
     public void userChoosesSizeAndQuantity(String size, String quantity) {
-        // set size of product
         birdSweaterPage.setSize(size);
-
-        //set quantity of product
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.urlContains("size-s"));
         birdSweaterPage.setQuantity(quantity);
     }
 
@@ -94,15 +88,14 @@ public class MyStoreBuySteps {
 
     @And("User chooses proceed to checkout")
     public void userChoosesProceedToCheckout() {
-        WebDriverWait wait = new WebDriverWait(driver, 5);
-        wait.until(ExpectedConditions.visibilityOf(birdSweaterPage.getCheckoutButton()));
+
         birdSweaterPage.clickCheckoutButton();
 
         ShoppingCardPage shoppingCardPage = new ShoppingCardPage(driver);
         shoppingCardPage.clickCheckoutButton();
     }
 
-    @And("User confirms address")
+    @And("User confirm address")
     public void userConfirmAddress() {
         controllerOrderPage = new ControllerOrderPage(driver);
         controllerOrderPage.clickConfirmAddressButton();
@@ -143,12 +136,12 @@ public class MyStoreBuySteps {
         System.out.println(orderDetails);
 
         //take screenshot of part of the page - in first way
-        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        FileUtils.copyFile(scrFile, new File("target/screenshot.png"));
+//        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+//        FileUtils.copyFile(scrFile, new File("target\\ScreenShots\\screenshot.png"));
 
         //take screenshot of whole page - in second way
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(500)).takeScreenshot(driver);
-        ImageIO.write(screenshot.getImage(), "png", new File("target/screenshotAShot.png"));
+//        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(500)).takeScreenshot(driver);
+//        ImageIO.write(screenshot.getImage(), "png", new File("target\\ScreenShots\\screenshotAShot.png"));
     }
 
     @When("User goes to Order history and detail of last order")
@@ -157,7 +150,7 @@ public class MyStoreBuySteps {
         yourAccountPage.clickHistoryButton();
     }
 
-    @Then("User can see order status {string} and total price")
+    @Then("User can see order status {string} and total prize")
     public void userCanSeeOrderStatusAndTotalPrize(String orderStatus) {
         OrderHistoryPage orderHistoryPage = new OrderHistoryPage(driver);
 

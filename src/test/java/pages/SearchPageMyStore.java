@@ -15,7 +15,7 @@ public class SearchPageMyStore {
     private WebElement product;
 
     public String getFullProductName() {
-        return product.getText().toLowerCase();
+        return product.getText();
     }
 
     public void chooseProduct() {
