@@ -10,7 +10,7 @@ Feature: Buy product in MyStore
     And User chooses proceed to checkout
     And User confirm address
     And User chooses shipping method - "pick up in store"
-    And User chooses payment "Pay by Check"ó
+    And User chooses payment "Pay by Check"
     And User clicks "Order with an obligation to pay"
     Then User can see information "YOUR ORDER IS CONFIRMED"
     When User goes to Order history and detail of last order

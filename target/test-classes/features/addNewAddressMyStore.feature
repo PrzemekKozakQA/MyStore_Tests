@@ -11,7 +11,7 @@ Feature: Add new address to account
     When User clicks "Delete" below last added address
     Then Address is deleted and users can see "Address successfully deleted!"
     And User close browser
-ó
+
     Examples:
       | alias  | address    | city   | code    | country        | phone            |
       | Home   | 1 Long St  | London | E11 3DB | United Kingdom | +44 123 456 7890 |
